@@ -1,2 +1,15 @@
-/mvnw text eol=lf
+* text=auto
+
+*.java text
+*.js text
+*.jsx text
+*.css text
+*.html text
+*.properties text
+*.yml text
+*.yaml text
+*.md text
+
 *.cmd text eol=crlf
+*.sh text eol=lf
+mvnw text eol=lf
