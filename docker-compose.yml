@@ -4,7 +4,9 @@ services:
   springboot-app:
     image: app
     restart: always
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "9090:8082"
     environment:
@@ -24,4 +26,7 @@ services:
       MARIADB_DATABASE: miola
       MARIADB_ROOT_PASSWORD: root
     volumes:
-      - "C:/Users/Doha Azami/db:/var/lib/mysql"
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
