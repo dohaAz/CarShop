@@ -26,6 +26,7 @@ Before running the project, make sure you have installed:
 - Docker Desktop
 - Node.js
 - Git
+- Maven
 
 ---
 
@@ -38,7 +39,19 @@ cd CarShop
 
 ---
 
-# 2. Run Backend + Database with Docker Compose
+# 2. Build the Spring Boot Application
+
+Open a terminal inside the backend folder:
+
+```bash
+cd backend
+mvn clean package -DskipTests
+cd ..
+```
+
+---
+
+# 3. Run Backend + Database with Docker Compose
 
 ```bash
 docker-compose up -d --build
@@ -57,7 +70,7 @@ http://localhost:9090/api/cars
 
 ---
 
-# 3. Run Frontend
+# 4. Run Frontend
 
 Open another terminal:
 
@@ -75,7 +88,7 @@ http://localhost:3000
 
 ---
 
-# 4. Useful Docker Commands
+# 5. Useful Docker Commands
 
 ## Check running containers
 
@@ -118,3 +131,4 @@ docker logs mariadb
 - MariaDB
 - Docker
 - Docker Compose
+
