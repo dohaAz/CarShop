@@ -3,276 +3,309 @@ import axios from 'axios';
 import { Card, Form, Button, Col, Row } from 'react-bootstrap';
 import MyToast from './MyToast';
 
+const getAuthHeader = () => {
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+
+    return {
+        Authorization: "Basic " + window.btoa(username + ":" + password)
+    };
+};
+
 export default class Car extends Component {
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      id: '',
-      brand: '',
-      model: '',
-      color: '',
-      registrationNumber: '',
-      manufacturingYear: '',
-      price: '',
-      show: false,
-      message: ''
-    };
+        this.state = {
+            id: '',
+            brand: '',
+            model: '',
+            color: '',
+            registrationNumber: '',
+            manufacturingYear: '',
+            price: '',
+            show: false,
+            message: ''
+        };
 
-    this.carChange = this.carChange.bind(this);
-    this.submitCar = this.submitCar.bind(this);
-    this.resetCar = this.resetCar.bind(this);
-  }
+        this.carChange = this.carChange.bind(this);
+        this.submitCar = this.submitCar.bind(this);
+        this.resetCar = this.resetCar.bind(this);
+    }
 
-  componentDidMount() {
+    componentDidMount() {
 
-    const id = window.location.pathname.split("/")[2];
+        const id = window.location.pathname.split("/")[2];
 
-    if (id) {
+        if (id) {
 
-      axios.get("http://localhost:9090/api/cars/" + id)
-        .then(response => {
+            axios.get(
+                "http://localhost:9090/api/cars/" + id,
+                {
+                    headers: getAuthHeader()
+                }
+            )
 
-          if (response.data != null) {
+                .then(response => {
 
-            this.setState({
-              id: id,
-              brand: response.data.brand,
-              model: response.data.model,
-              color: response.data.color,
-              registrationNumber: response.data.registrationNumber,
-              manufacturingYear: response.data.manufacturingYear,
-              price: response.data.price
-            });
+                    if (response.data != null) {
 
-            
-          }
+                        this.setState({
+                            id: id,
+                            brand: response.data.brand,
+                            model: response.data.model,
+                            color: response.data.color,
+                            registrationNumber: response.data.registrationNumber,
+                            manufacturingYear: response.data.manufacturingYear,
+                            price: response.data.price
+                        });
+                    }
+                })
+
+                .catch(() => {
+                    window.location.href = "/login";
+                });
+        }
+    }
+
+    resetCar() {
+
+        this.setState({
+            id: '',
+            brand: '',
+            model: '',
+            color: '',
+            registrationNumber: '',
+            manufacturingYear: '',
+            price: ''
         });
     }
-  }
 
-  resetCar() {
+    carChange(event) {
 
-    this.setState({
-      id: '',
-      brand: '',
-      model: '',
-      color: '',
-      registrationNumber: '',
-      manufacturingYear: '',
-      price: ''
-    });
-  }
-
-  carChange(event) {
-
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  }
-
-  submitCar(event) {
-
-    event.preventDefault();
-
-    const car = {
-      brand: this.state.brand,
-      model: this.state.model,
-      color: this.state.color,
-      registrationNumber: this.state.registrationNumber,
-      manufacturingYear: this.state.manufacturingYear,
-      price: this.state.price
-    };
-
-    if (this.state.id) {
-
-      axios.put(
-        "http://localhost:9090/api/cars/" + this.state.id,
-        car
-      )
-        .then(response => {
-
-          if (response.data != null) {
-
-            this.setState({
-              show: true,
-              message: "Car updated successfully"
-            });
-
-            setTimeout(() => {
-              this.setState({ show: false });
-              window.location.href = "/list";
-            }, 3000);
-          }
-        });
-
-    } else {
-
-      axios.post(
-        "http://localhost:9090/api/cars",
-        car
-      )
-        .then(response => {
-
-          if (response.data != null) {
-
-            this.setState({
-              show: true,
-              message: "Car saved successfully",
-              brand: '',
-              model: '',
-              color: '',
-              registrationNumber: '',
-              manufacturingYear: '',
-              price: ''
-            });
-
-            setTimeout(() => {
-              this.setState({ show: false });
-              window.location.href = "/list";
-            }, 3000);
-          }
+        this.setState({
+            [event.target.name]: event.target.value
         });
     }
-  }
 
-  render() {
+    submitCar(event) {
 
-    return (
+        event.preventDefault();
 
-      <div>
+        const car = {
+            brand: this.state.brand,
+            model: this.state.model,
+            color: this.state.color,
+            registrationNumber: this.state.registrationNumber,
+            manufacturingYear: this.state.manufacturingYear,
+            price: this.state.price
+        };
 
-        <MyToast
-          show={this.state.show}
-          message={this.state.message}
-        />
+        if (this.state.id) {
 
-        <Card className="border border-dark bg-dark text-white mt-4">
+            axios.put(
+                "http://localhost:9090/api/cars/" + this.state.id,
+                car,
+                {
+                    headers: getAuthHeader()
+                }
+            )
 
-          <Card.Header>
-            {this.state.id ? "Update Car" : "Add Car"}
-          </Card.Header>
+                .then(response => {
 
-          <Form onSubmit={this.submitCar} onReset={this.resetCar}>
+                    if (response.data != null) {
 
-            <Card.Body>
+                        this.setState({
+                            show: true,
+                            message: "Car updated successfully"
+                        });
 
-              <Row>
+                        setTimeout(() => {
+                            this.setState({ show: false });
+                            window.location.href = "/list";
+                        }, 3000);
+                    }
+                })
 
-                <Form.Group as={Col}>
-                  <Form.Label>Brand</Form.Label>
+                .catch(() => {
+                    window.location.href = "/login";
+                });
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="text"
-                    name="brand"
-                    value={this.state.brand}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+        } else {
 
-                <Form.Group as={Col}>
-                  <Form.Label>Model</Form.Label>
+            axios.post(
+                "http://localhost:9090/api/cars",
+                car,
+                {
+                    headers: getAuthHeader()
+                }
+            )
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="text"
-                    name="model"
-                    value={this.state.model}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+                .then(response => {
 
-              </Row>
+                    if (response.data != null) {
 
-              <Row className="mt-3">
+                        this.setState({
+                            show: true,
+                            message: "Car saved successfully",
+                            brand: '',
+                            model: '',
+                            color: '',
+                            registrationNumber: '',
+                            manufacturingYear: '',
+                            price: ''
+                        });
 
-                <Form.Group as={Col}>
-                  <Form.Label>Color</Form.Label>
+                        setTimeout(() => {
+                            this.setState({ show: false });
+                            window.location.href = "/list";
+                        }, 3000);
+                    }
+                })
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="text"
-                    name="color"
-                    value={this.state.color}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+                .catch(() => {
+                    window.location.href = "/login";
+                });
+        }
+    }
 
-                <Form.Group as={Col}>
-                  <Form.Label>Registration Number</Form.Label>
+    render() {
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="text"
-                    name="registrationNumber"
-                    value={this.state.registrationNumber}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+        return (
 
-              </Row>
+            <div>
 
-              <Row className="mt-3">
+                <MyToast
+                    show={this.state.show}
+                    message={this.state.message}
+                />
 
-                <Form.Group as={Col}>
-                  <Form.Label>Manufacturing Year</Form.Label>
+                <Card className="border border-dark bg-dark text-white mt-4">
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="number"
-                    name="manufacturingYear"
-                    value={this.state.manufacturingYear}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+                    <Card.Header>
+                        {this.state.id ? "Update Car" : "Add Car"}
+                    </Card.Header>
 
-                <Form.Group as={Col}>
-                  <Form.Label>Price</Form.Label>
+                    <Form onSubmit={this.submitCar} onReset={this.resetCar}>
 
-                  <Form.Control
-                    required
-                    autoComplete="off"
-                    type="number"
-                    name="price"
-                    value={this.state.price}
-                    onChange={this.carChange}
-                    className="bg-dark text-white"
-                  />
-                </Form.Group>
+                        <Card.Body>
 
-              </Row>
+                            <Row>
 
-            </Card.Body>
+                                <Form.Group as={Col}>
+                                    <Form.Label>Brand</Form.Label>
 
-            <Card.Footer className="text-end">
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="text"
+                                        name="brand"
+                                        value={this.state.brand}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
 
-              <Button size="sm" variant="success" type="submit">
-                {this.state.id ? "Update" : "Submit"}
-              </Button>{' '}
+                                <Form.Group as={Col}>
+                                    <Form.Label>Model</Form.Label>
 
-              <Button size="sm" variant="info" type="reset">
-                Reset
-              </Button>
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="text"
+                                        name="model"
+                                        value={this.state.model}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
 
-            </Card.Footer>
+                            </Row>
 
-          </Form>
+                            <Row className="mt-3">
 
-        </Card>
+                                <Form.Group as={Col}>
+                                    <Form.Label>Color</Form.Label>
 
-      </div>
-    );
-  }
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="text"
+                                        name="color"
+                                        value={this.state.color}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                    <Form.Label>Registration Number</Form.Label>
+
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="text"
+                                        name="registrationNumber"
+                                        value={this.state.registrationNumber}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
+
+                            </Row>
+
+                            <Row className="mt-3">
+
+                                <Form.Group as={Col}>
+                                    <Form.Label>Manufacturing Year</Form.Label>
+
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="number"
+                                        name="manufacturingYear"
+                                        value={this.state.manufacturingYear}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                    <Form.Label>Price</Form.Label>
+
+                                    <Form.Control
+                                        required
+                                        autoComplete="off"
+                                        type="number"
+                                        name="price"
+                                        value={this.state.price}
+                                        onChange={this.carChange}
+                                        className="bg-dark text-white"
+                                    />
+                                </Form.Group>
+
+                            </Row>
+
+                        </Card.Body>
+
+                        <Card.Footer className="text-end">
+
+                            <Button size="sm" variant="success" type="submit">
+                                {this.state.id ? "Update" : "Submit"}
+                            </Button>{' '}
+
+                            <Button size="sm" variant="info" type="reset">
+                                Reset
+                            </Button>
+
+                        </Card.Footer>
+
+                    </Form>
+
+                </Card>
+
+            </div>
+        );
+    }
 }
