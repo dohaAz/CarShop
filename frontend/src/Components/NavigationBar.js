@@ -35,6 +35,7 @@ class NavigationBar extends React.Component {
                             <Link to="/welcome" className="nav-link">Home</Link>
                             <Link to="/add" className="nav-link">Add Car</Link>
                             <Link to="/list" className="nav-link">Car List</Link>
+                            <Link to="/ai-advisor" className="nav-link">AI Advisor</Link>
                         </>
                     )}
                 </Nav>

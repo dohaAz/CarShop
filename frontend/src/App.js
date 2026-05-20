@@ -11,6 +11,7 @@ import CarList from './Components/CarList';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import Home from './Components/Home';
+import AiAdvisor from './Components/AiAdvisor';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/edit/:id" element={<Car />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/ai-advisor" element={<AiAdvisor />} />
         </Routes>
       </Container>
 
