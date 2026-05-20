@@ -7,6 +7,20 @@ Full Stack Car Management Application built with:
 - MariaDB
 - Docker
 - Docker Compose
+- Spring Security
+- Spring AI + Ollama
+
+---
+
+# Features
+
+- User Registration & Login
+- Spring Security Authentication
+- Add / Update / Delete Cars
+- Car List Management
+- AI Car Advisor powered by Ollama
+- REST API with Spring Data REST
+- Dockerized Backend & Database
 
 ---
 
@@ -51,7 +65,33 @@ cd ..
 
 ---
 
-# 3. Run Backend + Database with Docker Compose
+# 3. Start Ollama Container
+
+```bash
+docker start ollama
+```
+
+If Ollama container does not exist yet:
+
+```bash
+docker run -d --name ollama -p 11434:11434 ollama/ollama
+```
+
+Pull the AI model:
+
+```bash
+docker exec -it ollama ollama pull llama3.2
+```
+
+Verify installed models:
+
+```bash
+docker exec -it ollama ollama list
+```
+
+---
+
+# 4. Run Backend + Database with Docker Compose
 
 ```bash
 docker-compose up -d --build
@@ -70,7 +110,7 @@ http://localhost:9090/api/cars
 
 ---
 
-# 4. Run Frontend
+# 5. Run Frontend
 
 Open another terminal:
 
@@ -88,7 +128,41 @@ http://localhost:3000
 
 ---
 
-# 5. Useful Docker Commands
+# 6. Authentication
+
+Users must:
+
+1. Register a new account
+2. Login
+3. Access the application features
+
+Available features after login:
+
+- Add Car
+- Car List
+- AI Advisor
+
+---
+
+# 7. AI Advisor
+
+After login, users can access the AI Advisor page.
+
+Example prompts:
+
+```text
+I need a cheap family car under 200000 MAD
+```
+
+```text
+Recommend a black sporty car
+```
+
+The AI recommends cars based on the cars available in the database.
+
+---
+
+# 8. Useful Docker Commands
 
 ## Check running containers
 
@@ -120,15 +194,23 @@ docker logs carshop-springboot-app-1
 docker logs mariadb
 ```
 
+## Stop Ollama
+
+```bash
+docker stop ollama
+```
+
 ---
 
 # Technologies Used
 
 - Spring Boot
 - Spring Data REST
+- Spring Security
+- Spring AI
+- Ollama
 - React
 - Axios
 - MariaDB
 - Docker
 - Docker Compose
-
