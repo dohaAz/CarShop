@@ -203,19 +203,6 @@ docker stop ollama
 
 ---
 
-# Technologies Used
-
-- Spring Boot
-- Spring Data REST
-- Spring Security
-- Spring AI
-- Ollama
-- React
-- Axios
-- MariaDB
-- Docker
-- Docker Compose
-
 
 # Kubernetes Deployment (Minikube)
 
