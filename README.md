@@ -29,6 +29,7 @@ Full Stack Car Management Application built with:
 ```text
 backend/   -> Spring Boot backend
 frontend/  -> React frontend
+k8s/       -> Kubernetes manifests
 ```
 
 ---
@@ -214,3 +215,52 @@ docker stop ollama
 - MariaDB
 - Docker
 - Docker Compose
+
+
+# Kubernetes Deployment (Minikube)
+
+## Folder Structure
+
+```text
+k8s/
+ ├── app-deployment.yaml
+ ├── db-deployment.yaml
+ ├── mariadb-config.yaml
+ ├── mariadb-secrets.yaml
+```
+## Start Minikube
+```bash
+minikube start
+```
+
+## Build Backend Docker Image
+```bash
+cd backend
+mvn clean package -DskipTests
+docker build -t springboot-app:latest .
+cd ..
+```
+## Deploy to Kubernetes
+```bash
+cd k8s
+kubectl apply -f k8s/mariadb-config.yaml
+kubectl apply -f k8s/mariadb-secrets.yaml
+kubectl apply -f k8s/db-deployment.yaml
+kubectl apply -f k8s/app-deployment.yaml
+```
+## Check Status
+```bash
+kubectl get pods
+kubectl get services
+minikube service spring-app-svc --url
+```
+
+## Example:
+```text
+http://127.0.0.1:60015
+```
+## Stop Kubernetes Deployment
+```bash
+kubectl delete -f k8s/
+minikube stop
+```
